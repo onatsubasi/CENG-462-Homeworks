@@ -89,15 +89,18 @@ def mgu(rule: Rule, hc):
                 # we should check if the values are the same
                 if (hc.args[i] in mgu_ and mgu_[hc.args[i]] != arg) or (arg in mgu_ and mgu_[arg] != hc.args[i]):
                     return None
-                mgu_[hc.args[i]] = arg
+                if arg not in mgu_ :
+                    mgu_[hc.args[i]] = arg
                 continue
             if arg[0].islower():
                 if (hc.args[i] in mgu_ and mgu_[hc.args[i]] != arg) or (arg in mgu_ and mgu_[arg] != hc.args[i]):
                     return None
-                mgu_[arg] = hc.args[i]
+                if hc.args[i] not in mgu_ :
+                    mgu_[arg] = hc.args[i]
                 continue
             return None
         return mgu_ if mgu_ else None
+    
     body = hc.body
     predicate = rule.predicate
     args = rule.args
@@ -111,12 +114,14 @@ def mgu(rule: Rule, hc):
             if item.args[i][0].islower():
                 if (item.args[i] in mgu_ and mgu_[item.args[i]] != arg) or (arg in mgu_ and mgu_[arg] != item.args[i]):
                     return None
-                mgu_[item.args[i]] = arg
+                if arg not in mgu_ :
+                    mgu_[item.args[i]] = arg
                 continue
             if arg[0].islower():
                 if (item.args[i] in mgu_ and mgu_[item.args[i]] != arg) or (arg in mgu_ and mgu_[arg] != item.args[i]):
                     return None
-                mgu_[arg] = item.args[i]
+                if item.args[i] not in mgu_ :
+                    mgu_[arg] = item.args[i]
                 continue
             return None
         return mgu_ if mgu_ else None
@@ -242,7 +247,7 @@ def backward_chaining_helper(horn_clauses, q, inferred, stack, prev_hc=None) -> 
             return FAILURE_MSG, None
     stack.append(q)
     for hc in horn_clauses:
-        flag = False # flag for breaking the loop
+        flag = False # flag for breaking the outer loop
         if hc.head == q: # if the head of the Horn Clause is the query
             for hc_item in hc.body: #iterate over the body of the Horn Clause that contains the query
                 tmp_result_tuple = backward_chaining_helper(horn_clauses, hc_item, inferred, stack, hc)
@@ -291,63 +296,3 @@ def backward_chaining(kb, q):
     if result[0] == FAILURE_MSG:
         return FAILURE_MSG
     return [hc for hc in result[0]]
-
-
-
-kb0 = ["Partner(x,y) <- Loves(x,y), Loves(y,x)", "Happy(y) <- Gift(x,z), Partner(x,y)",
-"Loves(Feyza,Can)",
-"Loves(Can,Feyza)",
-"Gift(Can,z)"]
-q0 = "Happy(Feyza)"
-
-
-kb1 = ["Q(x) <- P(x)", "P(x) <- L(x), M(x)", "M(x) <- B(x), L(x)",
-"L(x) <- A(x), P(x)", "L(x) <- A(x), B(x)", "A(John)", "B(John)"]
-q1 = "Q(John)"
-
-kb2 = ["Q(x) <- P(x)", "P(x) <- L(x), M(x)", "M(x) <- B(x), L(x)",
-"L(x) <- A(x), P(x)", "L(x) <- A(x), B(x)", "A(John)", "B(John)"]
-q2 = "Q(John)"
-
-# parse(kb)
-
-
-# mgu = mgu(rule, hc)
-# print(mgu)
-# print(replace_hc(hc, mgu))
-
-# print(forward_chaining(kb, q))
-# print(forward_chaining(kb1, q1))
-# print(forward_chaining(kb2, q2))
-
-kb3 = ["Q(x) <- P(x)", "P(x) <- L(x), M(x)", "M(x) <- B(x), L(x)",
-"L(x) <- A(x), P(x)", "L(x) <- A(x), B(x)", "A(John)"]
-q3 = "Q(John)"
-
-
-kb4 = ["Q(x) <- P(x)", "P(x) <- L(x), M(x)", "M(x) <- B(x), L(x)",
-"L(x) <- A(x), P(x)", "L(x) <- A(x), B(x)", "A(John)"]
-q4 = "Q(John)"
-
-kb5 = ["Criminal(x) <- American(x), Weapon(y), Sells(x,y,z), Hostile(z)",
-"Weapon(x) <- Missile(x)",
-"Missile(M)",
-"Owns(Nono,M)",
-"Sells(West,x,Nono) <- Owns(Nono,x), Missile(x)",
-"Hostile(x) <- Enemy(x,America)",
-"American(West)",
-"Enemy(Nono,America)"]
-q5 = "Criminal(West)"
-
-print(forward_chaining(kb0, q0))
-print(forward_chaining(kb1, q1))
-print(backward_chaining(kb2, q2))
-print(forward_chaining(kb3, q3))
-print(backward_chaining(kb4, q4))
-print(backward_chaining(kb5, q5))
-# print(mgu(Rule("Missile(y)"), Rule("Missile(M)")))
-
-
-rule1 = Rule("Loves(x,y)")
-rule2 = Rule("Loves(y,x)")
-print(mgu(rule1, rule2))
