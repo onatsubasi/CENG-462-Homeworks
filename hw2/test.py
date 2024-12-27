@@ -4,7 +4,7 @@ from e2448835_hw2 import HornClause, Rule, mgu, replace_hc, forward_chaining, ba
 kb0 = ["Partner(x,y) <- Loves(x,y), Loves(y,x)", "Happy(y) <- Gift(x,z), Partner(x,y)",
 "Loves(Feyza,Can)",
 "Loves(Can,Feyza)",
-"Gift(Can,z)"]
+"Gift(Eren,z)"]
 q0 = "Happy(Feyza)"
 
 
@@ -46,15 +46,26 @@ kb5 = ["Criminal(x) <- American(x), Weapon(y), Sells(x,y,z), Hostile(z)",
 "Enemy(Nono,America)"]
 q5 = "Criminal(West)"
 
-print(forward_chaining(kb0, q0))
-print(forward_chaining(kb1, q1))
-print(backward_chaining(kb2, q2))
-print(forward_chaining(kb3, q3))
-print(backward_chaining(kb4, q4))
-print(backward_chaining(kb5, q5))
+
+
+kb6 = [ "B(x) <- A(x)",
+       "C(x) <- A(x)",
+       "D(x) <- A(x)",
+       "E(x) <- B(x), C(x), D(x)",
+       "F(x) <- E(x), D(x)",
+       "G(x) <- F(x), E(x)",
+         "A(John)"]
+q6 = "G(John)"
+# print(forward_chaining(kb0, q0))
+# print(forward_chaining(kb1, q1))
+# print(backward_chaining(kb2, q2))
+# print(forward_chaining(kb3, q3))
+# print(backward_chaining(kb4, q4))
+# print(backward_chaining(kb5, q5))
+print(backward_chaining(kb6, q6))
 # print(mgu(Rule("Missile(y)"), Rule("Missile(M)")))
 
 
 rule1 = Rule("Loves(x,y)")
 rule2 = Rule("Loves(y,z)")
-print(mgu(rule2, rule1))
+#print(mgu(rule2, rule1))
